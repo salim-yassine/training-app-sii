@@ -2,11 +2,11 @@ node {
    def mvnHome
    stage('Preparation') { // for display purposes
       // Get some code from a GitHub repository
-      git 'https://github.com/salim-yassine/training-app-sii.git'
+      git 'https://github.com/walidsaad/training-app-sii.git'
       // Get the Maven tool.
       // ** NOTE: This 'M3' Maven tool must be configured
       // **       in the global configuration.           
-      mvnHome = tool 'MAVEN 3'
+      mvnHome = tool 'maven3'
    }
    stage('Build') {
       // Run the maven build
@@ -18,7 +18,7 @@ node {
          }
       }
    }
-   stage('Test') {
+     stage('Test') {
       // Run the maven build
       withEnv(["MVN_HOME=$mvnHome"]) {
          if (isUnix()) {
@@ -28,11 +28,13 @@ node {
          }
       }
    }
+   
    stage('Results') {
       junit '**/target/surefire-reports/TEST-*.xml'
       archiveArtifacts 'target/*.jar'
    }
-   stage('Execute JAR') {
+   
+     stage('Execute JAR') {
       // Run the maven build
       withEnv(["MVN_HOME=$mvnHome"]) {
          if (isUnix()) {
@@ -42,8 +44,8 @@ node {
          }
       }
    }
-}
-  stage('Publish Artefact') {            
+   
+   stage('Publish Artefact') {            
       if (isUnix())
       {       
       sh "'${mvnHome}/bin/mvn' -Dmaven.test.skip=true deploy -s /home/stagiaire/tools/apache-maven-3.6.3/conf/settings.xml"
@@ -53,5 +55,4 @@ node {
       bat(/"${mvnHome}\bin\mvn" -Dmaven.test.skip=true deploy -s "C:\Program Files (x86)\apache-maven-3.5.3\conf\settings.xml"/)      
       }
    }
-}
 }
